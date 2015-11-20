@@ -1,0 +1,15 @@
+{
+  "name": "popcorn-movies-demo",
+  "author": "Cengiz Ulusoy",
+  "version": "1.0.0",
+  "description": "A small demo of an AppleTV application which makes use of TheMovieDB API.",
+  "scripts": {
+    "watch": "webpack --watch"
+  },
+  "devDependencies": {
+    "babel-core": "*",
+    "babel-loader": "*",
+    "node-libs-browser": "*",
+    "webpack": "*"
+  }
+}
