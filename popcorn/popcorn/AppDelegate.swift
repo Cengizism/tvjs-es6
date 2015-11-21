@@ -60,7 +60,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate, TVApplicationControllerDe
     // MARK: TVApplicationControllerDelegate
     
     func appController(appController: TVApplicationController, didFinishLaunchingWithOptions options: [String: AnyObject]?) {
-        print("\(__FUNCTION__) invoked with options: \(options)")
+        // print("\(__FUNCTION__) invoked with options: \(options)")
     }
     
     func appController(appController: TVApplicationController, didFailWithError error: NSError) {
@@ -76,6 +76,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate, TVApplicationControllerDe
     }
     
     func appController(appController: TVApplicationController, didStopWithOptions options: [String: AnyObject]?) {
-        print("\(__FUNCTION__) invoked with options: \(options)")
+        // print("\(__FUNCTION__) invoked with options: \(options)")
     }
 }
