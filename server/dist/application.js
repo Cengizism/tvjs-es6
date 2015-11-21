@@ -48,23 +48,14 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _resourceLoader = __webpack_require__(1);
-	
-	var _resourceLoader2 = _interopRequireDefault(_resourceLoader);
-	
-	var _presenter = __webpack_require__(2);
+	var _presenter = __webpack_require__(1);
 	
 	var _presenter2 = _interopRequireDefault(_presenter);
 	
-	var resourceLoader;
-	
 	App.onLaunch = function (options) {
-	  localStorage.setItem('baseurl', options.BASEURL);
+	  var presenter = new _presenter2['default'](options.BASEURL);
 	
-	  resourceLoader = new _resourceLoader2['default'](options.BASEURL);
-	
-	  var index = resourceLoader.loadResource(options.BASEURL + 'templates/Index.xml.js', function (resource) {
-	    var presenter = new _presenter2['default']();
+	  var index = presenter.loadResource(options.BASEURL + 'templates/Index.xml.js', function (resource) {
 	    var doc = presenter.makeDocument(resource);
 	
 	    doc.addEventListener('select', presenter.load.bind(presenter));
@@ -72,73 +63,6 @@
 	    navigationDocument.pushDocument(doc);
 	  });
 	};
-	
-	var createAlert = function createAlert(title, description) {
-	  var alertString = '<?xml version="1.0" encoding="UTF-8" ?>\n        <document>\n          <alertTemplate>\n            <title>' + title + '</title>\n            <description>' + description + '</description>\n          </alertTemplate>\n        </document>';
-	
-	  var parser = new DOMParser();
-	  var alertDoc = parser.parseFromString(alertString, 'application/xml');
-	
-	  return alertDoc;
-	};
-	
-	var buildResults = function buildResults(doc, searchText) {
-	  var regExp = new RegExp(searchText, 'i');
-	
-	  var matchesText = function matchesText(value) {
-	    return regExp.test(value);
-	  };
-	
-	  var movies = {
-	    'The Puffin': 1,
-	    'Lola and Max': 2,
-	    'Road to Firenze': 3,
-	    'Three Developers and a Baby': 4,
-	    'Santa Cruz Surf': 5,
-	    'Cinque Terre': 6,
-	    'Creatures of the Rainforest': 7
-	  };
-	
-	  var titles = Object.keys(movies);
-	  var domImplementation = doc.implementation;
-	  var lsParser = domImplementation.createLSParser(1, null);
-	  var lsInput = domImplementation.createLSInput();
-	
-	  lsInput.stringData = '<list>\n      <section>\n        <header>\n          <title>No Results</title>\n        </header>\n      </section>\n    </list>';
-	
-	  titles = searchText ? titles.filter(matchesText) : titles;
-	
-	  if (titles.length > 0) {
-	    lsInput.stringData = '<shelf><header><title>Results</title></header><section id="Results">';
-	
-	    for (var i = 0; i < titles.length; i++) {
-	      lsInput.stringData += '<lockup>\n          <img src="' + this.resourceLoader.BASEURL + 'resources/images/movies/movie_' + movies[titles[i]] + '.lcr" width="350" height="520" />\n          <title>' + titles[i] + '</title>\n        </lockup>';
-	    }
-	
-	    lsInput.stringData += '</section></shelf>';
-	  }
-	
-	  lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
-	
-	  getMovies('http://api.themoviedb.org/3/search/movie?api_key=c8806e55322afd9062df9442a5feffec&query=' + searchText, function (response) {
-	    console.log(response.results);
-	  });
-	};
-	
-	function getMovies(url, callback) {
-	  var templateXHR = new XMLHttpRequest();
-	
-	  templateXHR.responseType = 'document';
-	
-	  templateXHR.addEventListener('loadend', function () {
-	    callback.call(this, JSON.parse(templateXHR.responseText));
-	  }, false);
-	
-	  templateXHR.open('GET', url, true);
-	  templateXHR.send();
-	
-	  return templateXHR;
-	}
 
 /***/ },
 /* 1 */
@@ -154,18 +78,30 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
-	var ResourceLoader = (function () {
-	  function ResourceLoader(baseurl) {
-	    _classCallCheck(this, ResourceLoader);
+	var Presenter = (function () {
+	  function Presenter(baseurl) {
+	    _classCallCheck(this, Presenter);
+	
+	    this.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <loadingTemplate>\n              <activityIndicator>\n                <text>Loading...</text>\n              </activityIndicator>\n            </loadingTemplate>\n          </document>";
 	
 	    if (!baseurl) {
-	      //throw ("ResourceLoader: baseurl is required.");
+	      throw "ResourceLoader: baseurl is required.";
 	    }
 	
-	    this.BASEURL = baseurl || 'http://localhost:9001/';
+	    this.BASEURL = baseurl;
 	  }
 	
-	  _createClass(ResourceLoader, [{
+	  _createClass(Presenter, [{
+	    key: "createAlert",
+	    value: function createAlert(title, description) {
+	      var alertString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <alertTemplate>\n              <title>" + title + "</title>\n              <description>" + description + "</description>\n            </alertTemplate>\n          </document>";
+	
+	      var parser = new DOMParser();
+	      var alertDoc = parser.parseFromString(alertString, 'application/xml');
+	
+	      return alertDoc;
+	    }
+	  }, {
 	    key: "loadResource",
 	    value: function loadResource(resource, callback) {
 	      var self = this;
@@ -185,43 +121,8 @@
 	        }
 	      });
 	    }
-	  }]);
-	
-	  return ResourceLoader;
-	})();
-	
-	exports["default"] = ResourceLoader;
-	module.exports = exports["default"];
-
-/***/ },
-/* 2 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	var _resourceLoader = __webpack_require__(1);
-	
-	var _resourceLoader2 = _interopRequireDefault(_resourceLoader);
-	
-	var Presenter = (function () {
-	  function Presenter() {
-	    _classCallCheck(this, Presenter);
-	
-	    this.loadingTemplate = '<?xml version="1.0" encoding="UTF-8" ?>\n          <document>\n            <loadingTemplate>\n              <activityIndicator>\n                <text>Loading...</text>\n              </activityIndicator>\n            </loadingTemplate>\n          </document>';
-	  }
-	
-	  _createClass(Presenter, [{
-	    key: 'defaultPresenter',
+	  }, {
+	    key: "defaultPresenter",
 	    value: function defaultPresenter(xml) {
 	      if (this.loadingIndicatorVisible) {
 	        navigationDocument.replaceDocument(xml, this.loadingIndicator);
@@ -232,8 +133,69 @@
 	      }
 	    }
 	  }, {
-	    key: 'searchPresenter',
+	    key: "getMovies",
+	    value: function getMovies(url, callback) {
+	      var templateXHR = new XMLHttpRequest();
+	
+	      templateXHR.responseType = 'document';
+	
+	      templateXHR.addEventListener('loadend', function () {
+	        callback.call(this, JSON.parse(templateXHR.responseText));
+	      }, false);
+	
+	      templateXHR.open('GET', url, true);
+	      templateXHR.send();
+	
+	      return templateXHR;
+	    }
+	  }, {
+	    key: "buildResults",
+	    value: function buildResults(doc, searchText) {
+	      var regExp = new RegExp(searchText, 'i');
+	
+	      var matchesText = function matchesText(value) {
+	        return regExp.test(value);
+	      };
+	
+	      var movies = {
+	        'The Puffin': 1,
+	        'Lola and Max': 2,
+	        'Road to Firenze': 3,
+	        'Three Developers and a Baby': 4,
+	        'Santa Cruz Surf': 5,
+	        'Cinque Terre': 6,
+	        'Creatures of the Rainforest': 7
+	      };
+	
+	      var titles = Object.keys(movies);
+	      var domImplementation = doc.implementation;
+	      var lsParser = domImplementation.createLSParser(1, null);
+	      var lsInput = domImplementation.createLSInput();
+	
+	      lsInput.stringData = "<list>\n        <section>\n          <header>\n            <title>No Results</title>\n          </header>\n        </section>\n      </list>";
+	
+	      titles = searchText ? titles.filter(matchesText) : titles;
+	
+	      if (titles.length > 0) {
+	        lsInput.stringData = "<shelf><header><title>Results</title></header><section id=\"Results\">";
+	
+	        for (var i = 0; i < titles.length; i++) {
+	          lsInput.stringData += "<lockup>\n            <img src=\"" + this.BASEURL + "resources/images/movies/movie_" + movies[titles[i]] + ".lcr\" width=\"350\" height=\"520\" />\n            <title>" + titles[i] + "</title>\n          </lockup>";
+	        }
+	
+	        lsInput.stringData += "</section></shelf>";
+	      }
+	
+	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
+	
+	      this.getMovies('http://api.themoviedb.org/3/search/movie?api_key=c8806e55322afd9062df9442a5feffec&query=' + searchText, function (response) {
+	        console.log(response.results);
+	      });
+	    }
+	  }, {
+	    key: "searchPresenter",
 	    value: function searchPresenter(xml) {
+	      var self = this;
 	      this.defaultPresenter.call(this, xml);
 	      var doc = xml;
 	
@@ -243,16 +205,16 @@
 	      keyboard.onTextChange = function () {
 	        var searchText = keyboard.text;
 	        //console.log('search text changed: ' + searchText);
-	        buildResults(doc, searchText);
+	        self.buildResults(doc, searchText);
 	      };
 	    }
 	  }, {
-	    key: 'modalDialogPresenter',
+	    key: "modalDialogPresenter",
 	    value: function modalDialogPresenter(xml) {
 	      navigationDocument.presentModal(xml);
 	    }
 	  }, {
-	    key: 'menuBarItemPresenter',
+	    key: "menuBarItemPresenter",
 	    value: function menuBarItemPresenter(xml, ele) {
 	      var feature = ele.parentNode.getFeature('MenuBarDocument');
 	
@@ -265,7 +227,7 @@
 	      }
 	    }
 	  }, {
-	    key: 'load',
+	    key: "load",
 	    value: function load(event) {
 	      var self = this,
 	          ele = event.target,
@@ -275,9 +237,7 @@
 	      if (templateURL) {
 	        self.showLoadingIndicator(presentation);
 	
-	        var resourceLoader = new _resourceLoader2['default'](localStorage.getItem('baseurl'));
-	
-	        resourceLoader.loadResource(templateURL, function (resource) {
+	        this.loadResource(templateURL, function (resource) {
 	          if (resource) {
 	            var doc = self.makeDocument(resource);
 	
@@ -294,7 +254,7 @@
 	      }
 	    }
 	  }, {
-	    key: 'makeDocument',
+	    key: "makeDocument",
 	    value: function makeDocument(resource) {
 	      if (!Presenter.parser) {
 	        Presenter.parser = new DOMParser();
@@ -304,7 +264,7 @@
 	      return doc;
 	    }
 	  }, {
-	    key: 'showLoadingIndicator',
+	    key: "showLoadingIndicator",
 	    value: function showLoadingIndicator(presentation) {
 	      if (!this.loadingIndicator) {
 	        this.loadingIndicator = this.makeDocument(this.loadingTemplate);
@@ -317,7 +277,7 @@
 	      }
 	    }
 	  }, {
-	    key: 'removeLoadingIndicator',
+	    key: "removeLoadingIndicator",
 	    value: function removeLoadingIndicator() {
 	      if (this.loadingIndicatorVisible) {
 	        navigationDocument.removeDocument(this.loadingIndicator);
@@ -330,8 +290,8 @@
 	  return Presenter;
 	})();
 	
-	exports['default'] = Presenter;
-	module.exports = exports['default'];
+	exports["default"] = Presenter;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);

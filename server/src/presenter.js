@@ -1,7 +1,5 @@
-import ResourceLoader from './resource-loader';
-
 class Presenter {
-  constructor() {
+  constructor(baseurl) {
     this.loadingTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
           <document>
             <loadingTemplate>
@@ -9,7 +7,47 @@ class Presenter {
                 <text>Loading...</text>
               </activityIndicator>
             </loadingTemplate>
+          </document>`;
+
+    if (!baseurl) {
+      throw ("ResourceLoader: baseurl is required.");
+    }
+
+    this.BASEURL = baseurl;
+  }
+
+  createAlert(title, description) {
+    var alertString = `<?xml version="1.0" encoding="UTF-8" ?>
+          <document>
+            <alertTemplate>
+              <title>${title}</title>
+              <description>${description}</description>
+            </alertTemplate>
           </document>`
+
+    var parser = new DOMParser();
+    var alertDoc = parser.parseFromString(alertString, 'application/xml');
+
+    return alertDoc;
+  }
+
+  loadResource(resource, callback) {
+    var self = this;
+
+    evaluateScripts([resource], function(success) {
+      if (success) {
+        var resource = Template.call(self);
+        callback.call(self, resource);
+      } else {
+        var title = "Resource Loader Error",
+          description = `There was an error attempting to load the resource '${resource}'. \n\n Please try again later.`,
+          alert = createAlert(title, description);
+
+        Presenter.removeLoadingIndicator();
+
+        navigationDocument.presentModal(alert);
+      }
+    });
   }
 
   defaultPresenter(xml) {
@@ -22,7 +60,75 @@ class Presenter {
     }
   }
 
+  getMovies(url, callback) {
+    var templateXHR = new XMLHttpRequest();
+
+    templateXHR.responseType = 'document';
+
+    templateXHR.addEventListener('loadend', function() {
+      callback.call(this, JSON.parse(templateXHR.responseText));
+    }, false);
+
+    templateXHR.open('GET', url, true);
+    templateXHR.send();
+
+    return templateXHR;
+  }
+
+  buildResults(doc, searchText) {
+    var regExp = new RegExp(searchText, 'i');
+
+    var matchesText = function(value) {
+      return regExp.test(value);
+    }
+
+    var movies = {
+      'The Puffin': 1,
+      'Lola and Max': 2,
+      'Road to Firenze': 3,
+      'Three Developers and a Baby': 4,
+      'Santa Cruz Surf': 5,
+      'Cinque Terre': 6,
+      'Creatures of the Rainforest': 7
+    };
+
+    var titles = Object.keys(movies);
+    var domImplementation = doc.implementation;
+    var lsParser = domImplementation.createLSParser(1, null);
+    var lsInput = domImplementation.createLSInput();
+
+    lsInput.stringData = `<list>
+        <section>
+          <header>
+            <title>No Results</title>
+          </header>
+        </section>
+      </list>`;
+
+    titles = (searchText) ? titles.filter(matchesText) : titles;
+
+    if (titles.length > 0) {
+      lsInput.stringData = `<shelf><header><title>Results</title></header><section id="Results">`;
+
+      for (var i = 0; i < titles.length; i++) {
+        lsInput.stringData += `<lockup>
+            <img src="${this.BASEURL}resources/images/movies/movie_${movies[titles[i]]}.lcr" width="350" height="520" />
+            <title>${titles[i]}</title>
+          </lockup>`;
+      }
+
+      lsInput.stringData += `</section></shelf>`;
+    }
+
+    lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
+
+    this.getMovies('http://api.themoviedb.org/3/search/movie?api_key=c8806e55322afd9062df9442a5feffec&query=' + searchText, function(response) {
+      console.log(response.results);
+    });
+  }
+
   searchPresenter(xml) {
+    var self = this;
     this.defaultPresenter.call(this, xml);
     var doc = xml;
 
@@ -32,7 +138,7 @@ class Presenter {
     keyboard.onTextChange = function() {
       var searchText = keyboard.text;
       //console.log('search text changed: ' + searchText);
-      buildResults(doc, searchText);
+      self.buildResults(doc, searchText);
     }
   }
 
@@ -61,9 +167,7 @@ class Presenter {
     if (templateURL) {
       self.showLoadingIndicator(presentation);
 
-      let resourceLoader = new ResourceLoader(localStorage.getItem('baseurl'));
-
-      resourceLoader.loadResource(templateURL,
+      this.loadResource(templateURL,
         function(resource) {
           if (resource) {
             var doc = self.makeDocument(resource);
