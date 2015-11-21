@@ -1,19 +1,19 @@
 class Presenter {
   constructor(baseurl) {
-    this.loadingTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
-          <document>
-            <loadingTemplate>
-              <activityIndicator>
-                <text>Loading...</text>
-              </activityIndicator>
-            </loadingTemplate>
-          </document>`;
-
     if (!baseurl) {
       throw ("ResourceLoader: baseurl is required.");
     }
 
     this.BASEURL = baseurl;
+
+    this.loadingTemplate = `<?xml version="1.0" encoding="UTF-8" ?>
+            <document>
+              <loadingTemplate>
+                <activityIndicator>
+                  <text>Loading...</text>
+                </activityIndicator>
+              </loadingTemplate>
+            </document>`;
   }
 
   createAlert(title, description) {
@@ -25,8 +25,8 @@ class Presenter {
             </alertTemplate>
           </document>`
 
-    var parser = new DOMParser();
-    var alertDoc = parser.parseFromString(alertString, 'application/xml');
+    var parser = new DOMParser(),
+      alertDoc = parser.parseFromString(alertString, 'application/xml');
 
     return alertDoc;
   }
@@ -34,7 +34,7 @@ class Presenter {
   loadResource(resource, callback) {
     var self = this;
 
-    evaluateScripts([resource], function(success) {
+    evaluateScripts([resource], (success) => {
       if (success) {
         var resource = Template.call(self);
         callback.call(self, resource);
@@ -65,7 +65,7 @@ class Presenter {
 
     templateXHR.responseType = 'document';
 
-    templateXHR.addEventListener('loadend', function() {
+    templateXHR.addEventListener('loadend', () => {
       callback.call(this, JSON.parse(templateXHR.responseText));
     }, false);
 
@@ -78,7 +78,7 @@ class Presenter {
   buildResults(doc, searchText) {
     var regExp = new RegExp(searchText, 'i');
 
-    var matchesText = function(value) {
+    var matchesText = (value) => {
       return regExp.test(value);
     }
 
@@ -110,10 +110,10 @@ class Presenter {
     if (titles.length > 0) {
       lsInput.stringData = `<shelf><header><title>Results</title></header><section id="Results">`;
 
-      for (var i = 0; i < titles.length; i++) {
+      for (let title of titles) {
         lsInput.stringData += `<lockup>
-            <img src="${this.BASEURL}resources/images/movies/movie_${movies[titles[i]]}.lcr" width="350" height="520" />
-            <title>${titles[i]}</title>
+            <img src="${this.BASEURL}resources/images/movies/movie_${movies[title]}.lcr" width="350" height="520" />
+            <title>${title}</title>
           </lockup>`;
       }
 
@@ -135,7 +135,7 @@ class Presenter {
     var searchField = doc.getElementsByTagName('searchField').item(0);
     var keyboard = searchField.getFeature('Keyboard');
 
-    keyboard.onTextChange = function() {
+    keyboard.onTextChange = () => {
       var searchText = keyboard.text;
       //console.log('search text changed: ' + searchText);
       self.buildResults(doc, searchText);
@@ -167,22 +167,20 @@ class Presenter {
     if (templateURL) {
       self.showLoadingIndicator(presentation);
 
-      this.loadResource(templateURL,
-        function(resource) {
-          if (resource) {
-            var doc = self.makeDocument(resource);
+      this.loadResource(templateURL, (resource) => {
+        if (resource) {
+          var doc = self.makeDocument(resource);
 
-            doc.addEventListener('select', self.load.bind(self));
-            doc.addEventListener('highlight', self.load.bind(self));
+          doc.addEventListener('select', self.load.bind(self));
+          doc.addEventListener('highlight', self.load.bind(self));
 
-            if (self[presentation] instanceof Function) {
-              self[presentation].call(self, doc, ele);
-            } else {
-              self.defaultPresenter.call(self, doc);
-            }
+          if (self[presentation] instanceof Function) {
+            self[presentation].call(self, doc, ele);
+          } else {
+            self.defaultPresenter.call(self, doc);
           }
         }
-      );
+      });
     }
   }
 

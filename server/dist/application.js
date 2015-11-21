@@ -82,13 +82,13 @@
 	  function Presenter(baseurl) {
 	    _classCallCheck(this, Presenter);
 	
-	    this.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <loadingTemplate>\n              <activityIndicator>\n                <text>Loading...</text>\n              </activityIndicator>\n            </loadingTemplate>\n          </document>";
-	
 	    if (!baseurl) {
 	      throw "ResourceLoader: baseurl is required.";
 	    }
 	
 	    this.BASEURL = baseurl;
+	
+	    this.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n            <document>\n              <loadingTemplate>\n                <activityIndicator>\n                  <text>Loading...</text>\n                </activityIndicator>\n              </loadingTemplate>\n            </document>";
 	  }
 	
 	  _createClass(Presenter, [{
@@ -96,8 +96,8 @@
 	    value: function createAlert(title, description) {
 	      var alertString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <alertTemplate>\n              <title>" + title + "</title>\n              <description>" + description + "</description>\n            </alertTemplate>\n          </document>";
 	
-	      var parser = new DOMParser();
-	      var alertDoc = parser.parseFromString(alertString, 'application/xml');
+	      var parser = new DOMParser(),
+	          alertDoc = parser.parseFromString(alertString, 'application/xml');
 	
 	      return alertDoc;
 	    }
@@ -135,12 +135,14 @@
 	  }, {
 	    key: "getMovies",
 	    value: function getMovies(url, callback) {
+	      var _this = this;
+	
 	      var templateXHR = new XMLHttpRequest();
 	
 	      templateXHR.responseType = 'document';
 	
 	      templateXHR.addEventListener('loadend', function () {
-	        callback.call(this, JSON.parse(templateXHR.responseText));
+	        callback.call(_this, JSON.parse(templateXHR.responseText));
 	      }, false);
 	
 	      templateXHR.open('GET', url, true);
@@ -179,8 +181,29 @@
 	      if (titles.length > 0) {
 	        lsInput.stringData = "<shelf><header><title>Results</title></header><section id=\"Results\">";
 	
-	        for (var i = 0; i < titles.length; i++) {
-	          lsInput.stringData += "<lockup>\n            <img src=\"" + this.BASEURL + "resources/images/movies/movie_" + movies[titles[i]] + ".lcr\" width=\"350\" height=\"520\" />\n            <title>" + titles[i] + "</title>\n          </lockup>";
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
+	
+	        try {
+	          for (var _iterator = titles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var title = _step.value;
+	
+	            lsInput.stringData += "<lockup>\n            <img src=\"" + this.BASEURL + "resources/images/movies/movie_" + movies[title] + ".lcr\" width=\"350\" height=\"520\" />\n            <title>" + title + "</title>\n          </lockup>";
+	          }
+	        } catch (err) {
+	          _didIteratorError = true;
+	          _iteratorError = err;
+	        } finally {
+	          try {
+	            if (!_iteratorNormalCompletion && _iterator["return"]) {
+	              _iterator["return"]();
+	            }
+	          } finally {
+	            if (_didIteratorError) {
+	              throw _iteratorError;
+	            }
+	          }
 	        }
 	
 	        lsInput.stringData += "</section></shelf>";
