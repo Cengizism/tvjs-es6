@@ -85,7 +85,6 @@
 	    if (!baseurl) {
 	      throw "ResourceLoader: baseurl is required.";
 	    }
-	
 	    this.BASEURL = baseurl;
 	
 	    this.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n            <document>\n              <loadingTemplate>\n                <activityIndicator>\n                  <text>Loading...</text>\n                </activityIndicator>\n              </loadingTemplate>\n            </document>";
@@ -131,24 +130,6 @@
 	      } else {
 	        navigationDocument.pushDocument(xml);
 	      }
-	    }
-	  }, {
-	    key: "getMovies",
-	    value: function getMovies(url, callback) {
-	      var _this = this;
-	
-	      var templateXHR = new XMLHttpRequest();
-	
-	      templateXHR.responseType = 'document';
-	
-	      templateXHR.addEventListener('loadend', function () {
-	        callback.call(_this, JSON.parse(templateXHR.responseText));
-	      }, false);
-	
-	      templateXHR.open('GET', url, true);
-	      templateXHR.send();
-	
-	      return templateXHR;
 	    }
 	  }, {
 	    key: "buildResults",
@@ -210,10 +191,6 @@
 	      }
 	
 	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
-	
-	      this.getMovies('http://api.themoviedb.org/3/search/movie?api_key=c8806e55322afd9062df9442a5feffec&query=' + searchText, function (response) {
-	        console.log(response.results);
-	      });
 	    }
 	  }, {
 	    key: "searchPresenter",
