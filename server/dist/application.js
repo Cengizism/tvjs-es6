@@ -54,8 +54,9 @@
 	
 	App.onLaunch = function (options) {
 	  var presenter = new _presenter2['default'](options.BASEURL);
+	  var path = options.BASEURL + 'templates/Index.xml.js';
 	
-	  var index = presenter.loadResource(options.BASEURL + 'templates/Index.xml.js', function (resource) {
+	  var index = presenter.loadResource(path, function (resource) {
 	    var doc = presenter.makeDocument(resource);
 	    doc.addEventListener('select', presenter.load.bind(presenter));
 	    navigationDocument.pushDocument(doc);
@@ -66,15 +67,15 @@
 /* 1 */
 /***/ function(module, exports) {
 
-	"use strict";
+	'use strict';
 	
-	Object.defineProperty(exports, "__esModule", {
+	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
 	var Presenter = (function () {
 	  function Presenter(baseurl) {
@@ -85,40 +86,38 @@
 	    }
 	    this.BASEURL = baseurl;
 	
-	    this.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n            <document>\n              <loadingTemplate>\n                <activityIndicator>\n                  <text>Loading...</text>\n                </activityIndicator>\n              </loadingTemplate>\n            </document>";
+	    this.loadingTemplate = '<?xml version="1.0" encoding="UTF-8" ?>\n            <document>\n              <loadingTemplate>\n                <activityIndicator>\n                  <text>Loading...</text>\n                </activityIndicator>\n              </loadingTemplate>\n            </document>';
 	  }
 	
 	  _createClass(Presenter, [{
-	    key: "createAlert",
-	    value: function createAlert(title, description) {
-	      var alertString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <alertTemplate>\n              <title>" + title + "</title>\n              <description>" + description + "</description>\n            </alertTemplate>\n          </document>";
+	    key: 'createAlert',
+	    value: function createAlert(alert) {
+	      var body = '<?xml version="1.0" encoding="UTF-8" ?>\n          <document>\n            <alertTemplate>\n              <title>' + alert.title + '</title>\n              <description>' + alert.description + '</description>\n            </alertTemplate>\n          </document>';
 	
 	      var parser = new DOMParser();
-	      var alertDoc = parser.parseFromString(alertString, 'application/xml');
-	
-	      return alertDoc;
+	      return parser.parseFromString(body, 'application/xml');
 	    }
 	  }, {
-	    key: "loadResource",
+	    key: 'loadResource',
 	    value: function loadResource(resource, callback) {
-	      var self = this;
+	      var _this = this;
 	
 	      evaluateScripts([resource], function (success) {
 	        if (success) {
-	          var _resource = Template.call(self);
-	          callback.call(self, _resource);
+	          callback.call(_this, Template.call(_this));
 	        } else {
-	          var title = "Resource Loader Error";
-	          var description = "There was an error attempting to load the resource '" + resource + "'. \n\n Please try again later.";
-	          var _alert = createAlert(title, description);
+	          var _alert = {
+	            title: 'Resource Loader Error',
+	            description: 'There was an error attempting to load the resource \'' + resource + '\'. \n\n Please try again later.'
+	          };
 	
 	          Presenter.removeLoadingIndicator();
-	          navigationDocument.presentModal(_alert);
+	          navigationDocument.presentModal(createAlert(_alert));
 	        }
 	      });
 	    }
 	  }, {
-	    key: "defaultPresenter",
+	    key: 'defaultPresenter',
 	    value: function defaultPresenter(xml) {
 	      if (this.loadingIndicatorVisible) {
 	        navigationDocument.replaceDocument(xml, this.loadingIndicator);
@@ -129,12 +128,13 @@
 	      }
 	    }
 	  }, {
-	    key: "buildResults",
+	    key: 'buildResults',
 	    value: function buildResults(doc, searchText) {
 	      var regExp = new RegExp(searchText, 'i');
 	      var matchesText = function matchesText(value) {
 	        return regExp.test(value);
 	      };
+	
 	      var movies = {
 	        'The Puffin': 1,
 	        'Lola and Max': 2,
@@ -144,18 +144,18 @@
 	        'Cinque Terre': 6,
 	        'Creatures of the Rainforest': 7
 	      };
-	
 	      var titles = Object.keys(movies);
+	
 	      var domImplementation = doc.implementation;
 	      var lsParser = domImplementation.createLSParser(1, null);
 	      var lsInput = domImplementation.createLSInput();
 	
-	      lsInput.stringData = "<list>\n        <section>\n          <header>\n            <title>No Results</title>\n          </header>\n        </section>\n      </list>";
+	      lsInput.stringData = '<list>\n        <section>\n          <header>\n            <title>No Results</title>\n          </header>\n        </section>\n      </list>';
 	
 	      titles = searchText ? titles.filter(matchesText) : titles;
 	
 	      if (titles.length > 0) {
-	        lsInput.stringData = "<shelf><header><title>Results</title></header><section id=\"Results\">";
+	        lsInput.stringData = '<shelf><header><title>Results</title></header><section id="Results">';
 	
 	        var _iteratorNormalCompletion = true;
 	        var _didIteratorError = false;
@@ -165,15 +165,15 @@
 	          for (var _iterator = titles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var title = _step.value;
 	
-	            lsInput.stringData += "<lockup>\n            <img src=\"" + this.BASEURL + "resources/images/movies/movie_" + movies[title] + ".lcr\" width=\"350\" height=\"520\" />\n            <title>" + title + "</title>\n          </lockup>";
+	            lsInput.stringData += '<lockup>\n            <img src="' + this.BASEURL + 'resources/images/movies/movie_' + movies[title] + '.lcr" width="350" height="520" />\n            <title>' + title + '</title>\n          </lockup>';
 	          }
 	        } catch (err) {
 	          _didIteratorError = true;
 	          _iteratorError = err;
 	        } finally {
 	          try {
-	            if (!_iteratorNormalCompletion && _iterator["return"]) {
-	              _iterator["return"]();
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	              _iterator['return']();
 	            }
 	          } finally {
 	            if (_didIteratorError) {
@@ -182,85 +182,85 @@
 	          }
 	        }
 	
-	        lsInput.stringData += "</section></shelf>";
+	        lsInput.stringData += '</section></shelf>';
 	      }
 	
-	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
+	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName('collectionList').item(0), 2);
 	    }
 	  }, {
-	    key: "searchPresenter",
+	    key: 'searchPresenter',
 	    value: function searchPresenter(xml) {
-	      var self = this;
-	      var doc = xml;
+	      var _this2 = this;
 	
 	      this.defaultPresenter.call(this, xml);
 	
+	      var doc = xml;
 	      var searchField = doc.getElementsByTagName('searchField').item(0);
 	      var keyboard = searchField.getFeature('Keyboard');
 	
 	      keyboard.onTextChange = function () {
 	        var searchText = keyboard.text;
 	        console.log('search text changed: ' + searchText);
-	        self.buildResults(doc, searchText);
+	        _this2.buildResults(doc, searchText);
 	      };
 	    }
 	  }, {
-	    key: "modalDialogPresenter",
+	    key: 'modalDialogPresenter',
 	    value: function modalDialogPresenter(xml) {
 	      navigationDocument.presentModal(xml);
 	    }
 	  }, {
-	    key: "menuBarItemPresenter",
-	    value: function menuBarItemPresenter(xml, ele) {
-	      var feature = ele.parentNode.getFeature('MenuBarDocument');
+	    key: 'menuBarItemPresenter',
+	    value: function menuBarItemPresenter(xml, element) {
+	      var feature = element.parentNode.getFeature('MenuBarDocument');
 	
 	      if (feature) {
-	        var currentDoc = feature.getDocument(ele);
+	        var currentDoc = feature.getDocument(element);
 	
 	        if (!currentDoc) {
-	          feature.setDocument(xml, ele);
+	          feature.setDocument(xml, element);
 	        }
 	      }
 	    }
 	  }, {
-	    key: "load",
+	    key: 'load',
 	    value: function load(event) {
-	      var self = this;
-	      var ele = event.target;
-	      var templateURL = ele.getAttribute('template');
-	      var presentation = ele.getAttribute('presentation');
+	      var _this3 = this;
+	
+	      var element = event.target;
+	      var templateURL = element.getAttribute('template');
+	      var presentation = element.getAttribute('presentation');
 	
 	      if (templateURL) {
-	        self.showLoadingIndicator(presentation);
+	        this.showLoadingIndicator(presentation);
 	
 	        this.loadResource(templateURL, function (resource) {
 	          if (resource) {
-	            var doc = self.makeDocument(resource);
+	            var doc = _this3.makeDocument(resource);
 	
-	            doc.addEventListener('select', self.load.bind(self));
-	            doc.addEventListener('highlight', self.load.bind(self));
+	            doc.addEventListener('select', _this3.load.bind(_this3));
+	            doc.addEventListener('highlight', _this3.load.bind(_this3));
 	
-	            if (self[presentation] instanceof Function) {
-	              self[presentation].call(self, doc, ele);
+	            if (_this3[presentation] instanceof Function) {
+	              _this3[presentation].call(_this3, doc, element);
 	            } else {
-	              self.defaultPresenter.call(self, doc);
+	              _this3.defaultPresenter.call(_this3, doc);
 	            }
 	          }
 	        });
 	      }
 	    }
 	  }, {
-	    key: "makeDocument",
+	    key: 'makeDocument',
 	    value: function makeDocument(resource) {
 	      if (!Presenter.parser) {
 	        Presenter.parser = new DOMParser();
 	      }
 	
-	      var doc = Presenter.parser.parseFromString(resource, 'application/xml');
-	      return doc;
+	      return Presenter.parser.parseFromString(resource, 'application/xml');
 	    }
 	  }, {
-	    key: "showLoadingIndicator",
+	    key: 'showLoadingIndicator',
 	    value: function showLoadingIndicator(presentation) {
 	      if (!this.loadingIndicator) {
 	        this.loadingIndicator = this.makeDocument(this.loadingTemplate);
@@ -273,7 +273,7 @@
 	      }
 	    }
 	  }, {
-	    key: "removeLoadingIndicator",
+	    key: 'removeLoadingIndicator',
 	    value: function removeLoadingIndicator() {
 	      if (this.loadingIndicatorVisible) {
 	        navigationDocument.removeDocument(this.loadingIndicator);
@@ -286,8 +286,8 @@
 	  return Presenter;
 	})();
 	
-	exports["default"] = Presenter;
-	module.exports = exports["default"];
+	exports['default'] = Presenter;
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

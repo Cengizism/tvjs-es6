@@ -15,35 +15,31 @@ class Presenter {
             </document>`;
   }
 
-  createAlert(title, description) {
-    let alertString = `<?xml version="1.0" encoding="UTF-8" ?>
+  createAlert(alert) {
+    let body = `<?xml version="1.0" encoding="UTF-8" ?>
           <document>
             <alertTemplate>
-              <title>${title}</title>
-              <description>${description}</description>
+              <title>${alert.title}</title>
+              <description>${alert.description}</description>
             </alertTemplate>
           </document>`
 
     let parser = new DOMParser();
-    let alertDoc = parser.parseFromString(alertString, 'application/xml');
-
-    return alertDoc;
+    return parser.parseFromString(body, 'application/xml');
   }
 
   loadResource(resource, callback) {
-    var self = this;
-
     evaluateScripts([resource], (success) => {
       if (success) {
-        let resource = Template.call(self);
-        callback.call(self, resource);
+        callback.call(this, Template.call(this));
       } else {
-        let title = "Resource Loader Error";
-        let description = `There was an error attempting to load the resource '${resource}'. \n\n Please try again later.`;
-        let alert = createAlert(title, description);
+        let alert = {
+          title: 'Resource Loader Error',
+          description: `There was an error attempting to load the resource '${resource}'. \n\n Please try again later.`
+        };
 
         Presenter.removeLoadingIndicator();
-        navigationDocument.presentModal(alert);
+        navigationDocument.presentModal( createAlert(alert) );
       }
     });
   }
@@ -61,6 +57,7 @@ class Presenter {
   buildResults(doc, searchText) {
     let regExp = new RegExp(searchText, 'i');
     let matchesText = value => regExp.test(value);
+
     let movies = {
       'The Puffin': 1,
       'Lola and Max': 2,
@@ -70,8 +67,8 @@ class Presenter {
       'Cinque Terre': 6,
       'Creatures of the Rainforest': 7
     };
-
     let titles = Object.keys(movies);
+
     let domImplementation = doc.implementation;
     let lsParser = domImplementation.createLSParser(1, null);
     let lsInput = domImplementation.createLSInput();
@@ -99,22 +96,20 @@ class Presenter {
       lsInput.stringData += `</section></shelf>`;
     }
 
-    lsParser.parseWithContext(lsInput, doc.getElementsByTagName("collectionList").item(0), 2);
+    lsParser.parseWithContext(lsInput, doc.getElementsByTagName('collectionList').item(0), 2);
   }
 
   searchPresenter(xml) {
-    let self = this;
-    let doc = xml;
-
     this.defaultPresenter.call(this, xml);
 
+    let doc = xml;
     let searchField = doc.getElementsByTagName('searchField').item(0);
     let keyboard = searchField.getFeature('Keyboard');
 
     keyboard.onTextChange = () => {
       let searchText = keyboard.text;
       console.log('search text changed: ' + searchText);
-      self.buildResults(doc, searchText);
+      this.buildResults(doc, searchText);
     }
   }
 
@@ -122,38 +117,37 @@ class Presenter {
     navigationDocument.presentModal(xml);
   }
 
-  menuBarItemPresenter(xml, ele) {
-    let feature = ele.parentNode.getFeature('MenuBarDocument');
+  menuBarItemPresenter(xml, element) {
+    let feature = element.parentNode.getFeature('MenuBarDocument');
 
     if (feature) {
-      let currentDoc = feature.getDocument(ele);
+      let currentDoc = feature.getDocument(element);
 
       if (!currentDoc) {
-        feature.setDocument(xml, ele);
+        feature.setDocument(xml, element);
       }
     }
   }
 
   load(event) {
-    let self = this;
-    let ele = event.target;
-    let templateURL = ele.getAttribute('template');
-    let presentation = ele.getAttribute('presentation');
+    let element = event.target;
+    let templateURL = element.getAttribute('template');
+    let presentation = element.getAttribute('presentation');
 
     if (templateURL) {
-      self.showLoadingIndicator(presentation);
+      this.showLoadingIndicator(presentation);
 
       this.loadResource(templateURL, (resource) => {
         if (resource) {
-          var doc = self.makeDocument(resource);
+          var doc = this.makeDocument(resource);
 
-          doc.addEventListener('select', self.load.bind(self));
-          doc.addEventListener('highlight', self.load.bind(self));
+          doc.addEventListener('select', this.load.bind(this));
+          doc.addEventListener('highlight', this.load.bind(this));
 
-          if (self[presentation] instanceof Function) {
-            self[presentation].call(self, doc, ele);
+          if (this[presentation] instanceof Function) {
+            this[presentation].call(this, doc, element);
           } else {
-            self.defaultPresenter.call(self, doc);
+            this.defaultPresenter.call(this, doc);
           }
         }
       });
@@ -165,8 +159,7 @@ class Presenter {
       Presenter.parser = new DOMParser();
     }
 
-    let doc = Presenter.parser.parseFromString(resource, 'application/xml');
-    return doc;
+    return Presenter.parser.parseFromString(resource, 'application/xml');
   }
 
   showLoadingIndicator(presentation) {
