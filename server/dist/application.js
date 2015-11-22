@@ -65,7 +65,7 @@
 
 /***/ },
 /* 1 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
@@ -75,11 +75,25 @@
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var Presenter = (function () {
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _dom = __webpack_require__(2);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	var Presenter = (function (_Dom) {
+	  _inherits(Presenter, _Dom);
+	
 	  function Presenter(baseurl) {
 	    _classCallCheck(this, Presenter);
+	
+	    _get(Object.getPrototypeOf(Presenter.prototype), 'constructor', this).call(this);
 	
 	    if (!baseurl) {
 	      throw "ResourceLoader: baseurl is required.";
@@ -94,8 +108,7 @@
 	    value: function createAlert(alert) {
 	      var body = '<?xml version="1.0" encoding="UTF-8" ?>\n          <document>\n            <alertTemplate>\n              <title>' + alert.title + '</title>\n              <description>' + alert.description + '</description>\n            </alertTemplate>\n          </document>';
 	
-	      var parser = new DOMParser();
-	      return parser.parseFromString(body, 'application/xml');
+	      return _get(Object.getPrototypeOf(Presenter.prototype), 'domParser', this).call(this, body);
 	    }
 	  }, {
 	    key: 'loadResource',
@@ -146,16 +159,12 @@
 	      };
 	      var titles = Object.keys(movies);
 	
-	      var domImplementation = doc.implementation;
-	      var lsParser = domImplementation.createLSParser(1, null);
-	      var lsInput = domImplementation.createLSInput();
-	
-	      lsInput.stringData = '<list>\n        <section>\n          <header>\n            <title>No Results</title>\n          </header>\n        </section>\n      </list>';
+	      var stringData = '<list>\n          <section>\n            <header>\n              <title>No Results</title>\n            </header>\n          </section>\n        </list>';
 	
 	      titles = searchText ? titles.filter(matchesText) : titles;
 	
 	      if (titles.length > 0) {
-	        lsInput.stringData = '<shelf><header><title>Results</title></header><section id="Results">';
+	        stringData = '<shelf><header><title>Results</title></header><section id="Results">';
 	
 	        var _iteratorNormalCompletion = true;
 	        var _didIteratorError = false;
@@ -165,7 +174,7 @@
 	          for (var _iterator = titles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
 	            var title = _step.value;
 	
-	            lsInput.stringData += '<lockup>\n            <img src="' + this.BASEURL + 'resources/images/movies/movie_' + movies[title] + '.lcr" width="350" height="520" />\n            <title>' + title + '</title>\n          </lockup>';
+	            stringData += '<lockup>\n            <img src="' + this.BASEURL + 'resources/images/movies/movie_' + movies[title] + '.lcr" width="350" height="520" />\n            <title>' + title + '</title>\n          </lockup>';
 	          }
 	        } catch (err) {
 	          _didIteratorError = true;
@@ -182,10 +191,10 @@
 	          }
 	        }
 	
-	        lsInput.stringData += '</section></shelf>';
+	        stringData += '</section></shelf>';
 	      }
 	
-	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName('collectionList').item(0), 2);
+	      _get(Object.getPrototypeOf(Presenter.prototype), 'domReplacer', this).call(this, stringData, 'collectionList', doc);
 	    }
 	  }, {
 	    key: 'searchPresenter',
@@ -284,9 +293,53 @@
 	  }]);
 	
 	  return Presenter;
-	})();
+	})(_dom2['default']);
 	
 	exports['default'] = Presenter;
+	module.exports = exports['default'];
+
+/***/ },
+/* 2 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var Dom = (function () {
+	  function Dom() {
+	    _classCallCheck(this, Dom);
+	  }
+	
+	  _createClass(Dom, [{
+	    key: 'domParser',
+	    value: function domParser(body) {
+	      var parser = new DOMParser();
+	      return parser.parseFromString(body, 'application/xml');
+	    }
+	  }, {
+	    key: 'domReplacer',
+	    value: function domReplacer(data, target, doc) {
+	      var domImplementation = doc.implementation;
+	      var lsParser = domImplementation.createLSParser(1, null);
+	      var lsInput = domImplementation.createLSInput();
+	
+	      lsInput.stringData = data;
+	
+	      lsParser.parseWithContext(lsInput, doc.getElementsByTagName(target).item(0), 2);
+	    }
+	  }]);
+	
+	  return Dom;
+	})();
+	
+	exports['default'] = Dom;
 	module.exports = exports['default'];
 
 /***/ }

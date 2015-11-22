@@ -1,5 +1,9 @@
-class Presenter {
+import Dom from './dom';
+
+class Presenter extends Dom {
   constructor(baseurl) {
+    super();
+
     if (!baseurl) {
       throw ("ResourceLoader: baseurl is required.");
     }
@@ -24,8 +28,7 @@ class Presenter {
             </alertTemplate>
           </document>`
 
-    let parser = new DOMParser();
-    return parser.parseFromString(body, 'application/xml');
+    return super.domParser(body);
   }
 
   loadResource(resource, callback) {
@@ -69,34 +72,30 @@ class Presenter {
     };
     let titles = Object.keys(movies);
 
-    let domImplementation = doc.implementation;
-    let lsParser = domImplementation.createLSParser(1, null);
-    let lsInput = domImplementation.createLSInput();
-
-    lsInput.stringData = `<list>
-        <section>
-          <header>
-            <title>No Results</title>
-          </header>
-        </section>
-      </list>`;
+    let stringData = `<list>
+          <section>
+            <header>
+              <title>No Results</title>
+            </header>
+          </section>
+        </list>`;
 
     titles = (searchText) ? titles.filter(matchesText) : titles;
 
     if (titles.length > 0) {
-      lsInput.stringData = `<shelf><header><title>Results</title></header><section id="Results">`;
+      stringData = `<shelf><header><title>Results</title></header><section id="Results">`;
 
       for (let title of titles) {
-        lsInput.stringData += `<lockup>
+        stringData += `<lockup>
             <img src="${this.BASEURL}resources/images/movies/movie_${movies[title]}.lcr" width="350" height="520" />
             <title>${title}</title>
           </lockup>`;
       }
 
-      lsInput.stringData += `</section></shelf>`;
+      stringData += `</section></shelf>`;
     }
 
-    lsParser.parseWithContext(lsInput, doc.getElementsByTagName('collectionList').item(0), 2);
+    super.domReplacer(stringData, 'collectionList', doc);
   }
 
   searchPresenter(xml) {
