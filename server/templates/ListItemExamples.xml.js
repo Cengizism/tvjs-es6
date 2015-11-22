@@ -7,7 +7,7 @@ A list template shows a list of items on the right, such as movies or TV shows. 
 
 When designing list template, you should use the same format of list items on the page.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <head>
     <style>
@@ -57,7 +57,7 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
     <list>
       <relatedContent>
         <itemBanner>
-          <heroImg src="${this.BASEURL}resources/images/italy/italy_10_square.jpg" />
+          <heroImg src="${this.TVBaseURL}resources/images/italy/italy_10_square.jpg" />
         </itemBanner>
       </relatedContent>
       <header>
@@ -88,20 +88,20 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
           <title>List Items with Images</title>
         </header>
         <listItemLockup>
-          <img src="${this.BASEURL}resources/images/iceland/iceland_1_square_small.jpg" width="90" height="90" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_1_square_small.jpg" width="90" height="90" />
           <title>Square</title>
         </listItemLockup>
         <listItemLockup>
-          <img src="${this.BASEURL}resources/images/iceland/iceland_4_poster_small.jpg" width="76" height="135" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_4_poster_small.jpg" width="76" height="135" />
           <title>Poster</title>
         </listItemLockup>
         <listItemLockup>
-          <img src="${this.BASEURL}resources/images/iceland/iceland_3_poster_small.jpg" width="76" height="135" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_3_poster_small.jpg" width="76" height="135" />
           <title>Title</title>
           <subtitle>Subtitle</subtitle>
         </listItemLockup>
         <listItemLockup style="margin: 0 0 0 -5">
-          <img src="${this.BASEURL}resources/images/iceland/iceland_4_small.jpg" width="280" height="187" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_4_small.jpg" width="280" height="187" />
           <title>Title</title>
         </listItemLockup>
       </section>
@@ -125,9 +125,9 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
         </listItemLockup>
         <listItemLockup class="tallListItemLockup">
           <row class="leftAligned">
-            <img src="${this.BASEURL}resources/images/iceland/iceland_6_square.jpg" width="90" height="90" />
+            <img src="${this.TVBaseURL}resources/images/iceland/iceland_6_square.jpg" width="90" height="90" />
             <text class="interImageText">vs</text>
-            <img src="${this.BASEURL}resources/images/iceland/iceland_7_square.jpg" width="90" height="90" />
+            <img src="${this.TVBaseURL}resources/images/iceland/iceland_7_square.jpg" width="90" height="90" />
           </row>
           <title>Title</title>
           <decorationLabel>Right</decorationLabel>

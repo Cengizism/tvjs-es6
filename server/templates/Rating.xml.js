@@ -7,7 +7,7 @@ A rating template allows the user to adjust the rating of a particular item, suc
 
 To handle rating changes, add a listener for the change event. The event object will contain a property named "value" ranging from 0.2 (1 star) to 1.0 (5 stars)
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8"?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8"?>
 <document>
 	<ratingTemplate>
 	    <title>Rate Lorem Ipsum</title>

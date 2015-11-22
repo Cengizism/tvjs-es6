@@ -11,14 +11,14 @@ Keep menu items on screen. When the menu bar is in focus, all of its items shoul
 
 For specific guidance on providing a great user experience in a menu bar, see Tab Bars in Interactive Elements.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <menuBarTemplate>
     <menuBar>
-      <menuItem template="${this.BASEURL}templates/Parade.xml.js" presentation="menuBarItemPresenter">
+      <menuItem template="${this.TVBaseURL}templates/Parade.xml.js" presentation="menuBarItemPresenter">
         <title>Tab 1</title>
       </menuItem>
-      <menuItem template="${this.BASEURL}templates/Catalog.xml.js" presentation="menuBarItemPresenter">
+      <menuItem template="${this.TVBaseURL}templates/Catalog.xml.js" presentation="menuBarItemPresenter">
         <title>Tab 2</title>
       </menuItem>
     </menuBar>

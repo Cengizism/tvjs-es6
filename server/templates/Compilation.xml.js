@@ -5,7 +5,7 @@ See LICENSE.txt for this sample’s licensing information
 Abstract:
 A compilation template displays elements contained by an item, such as songs in an album or tracks in a playlist. It’s most commonly used to display audio-related content.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <head>
     <style>
@@ -21,7 +21,7 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
     <list>
       <relatedContent>
         <itemBanner>
-          <heroImg src="${this.BASEURL}resources/images/italy/italy_20_square.jpg" />
+          <heroImg src="${this.TVBaseURL}resources/images/italy/italy_20_square.jpg" />
           <row>
             <buttonLockup>
               <badge src="resource://button-add-alt" class="whiteButton" />

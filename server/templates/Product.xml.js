@@ -7,7 +7,7 @@ A product template promotes movies, TV shows, or other products. It typically in
 
 Consider image and text colors carefully when customizing the background. By default, the background displays a blurred copy of your product image, producing a nice, complementary visual effect. If you decide to customize the background, make sure it doesn’t clash with your other content.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <head>
     <style>
@@ -25,11 +25,11 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
   <productTemplate theme="light">
     <background>
       <audio>
-        <asset src="${this.BASEURL}resources/audio/Building_Blocks.mp3" />
+        <asset src="${this.TVBaseURL}resources/audio/Building_Blocks.mp3" />
       </audio>
     </background>
     <banner>
-      <heroImg src="${this.BASEURL}resources/images/italy/italy_9_square.jpg" />
+      <heroImg src="${this.TVBaseURL}resources/images/italy/italy_9_square.jpg" />
       <infoList>
         <info>
           <header>
@@ -47,7 +47,7 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
           <text>Text 2</text>
           <text>Text 3</text>
         </row>
-        <description allowsZooming="true" template="${this.BASEURL}templates/AlertWithDescription.xml.js" presentation="modalDialogPresenter">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</description>
+        <description allowsZooming="true" template="${this.TVBaseURL}templates/AlertWithDescription.xml.js" presentation="modalDialogPresenter">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</description>
         <row>
           <buttonLockup>
             <badge src="resource://button-remove" class="whiteBadge" />
@@ -70,59 +70,59 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
       </header>
       <section>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_1.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_1.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 1</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_2.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_2.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 2</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_3.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_3.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 3</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_4.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_4.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 4</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_5.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_5.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 5</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_6.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_6.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 6</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_7.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_7.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 7</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_1.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_1.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 8</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_2.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_2.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 9</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_3.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_3.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 10</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_4.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_4.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 11</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_5.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_5.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 12</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_6.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_6.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 13</title>
         </lockup>
         <lockup>
-          <img src="${this.BASEURL}resources/images/movies/movie_7.lcr" width="150" height="226" />
+          <img src="${this.TVBaseURL}resources/images/movies/movie_7.lcr" width="150" height="226" />
           <title class="showTextOnHighlight">Title 14</title>
         </lockup>
       </section>

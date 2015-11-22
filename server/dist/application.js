@@ -48,19 +48,31 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _presenter = __webpack_require__(1);
+	var _controller = __webpack_require__(1);
 	
-	var _presenter2 = _interopRequireDefault(_presenter);
+	var _controller2 = _interopRequireDefault(_controller);
 	
 	App.onLaunch = function (options) {
-	  var presenter = new _presenter2['default'](options.BASEURL);
-	  var path = options.BASEURL + 'templates/Index.xml.js';
+	  var controller = new _controller2['default'](options.TVBaseURL);
+	  var path = options.TVBaseURL + 'templates/Index.xml.js';
 	
-	  var index = presenter.loadResource(path, function (resource) {
-	    var doc = presenter.makeDocument(resource);
-	    doc.addEventListener('select', presenter.load.bind(presenter));
+	  var index = controller.loadResource(path, function (resource) {
+	    var doc = controller.dom.parse(resource);
+	    doc.addEventListener('select', controller.load.bind(controller));
 	    navigationDocument.pushDocument(doc);
 	  });
+	};
+	
+	App.reload = function (options, reloadData) {
+	  console.log('Application reloaded with:', options, reloadData);
+	};
+	
+	App.onError = function (options) {
+	  console.error('Application stopped working because of;', options);
+	};
+	
+	App.onExit = function (options) {
+	  console.log('Quitting application.');
 	};
 
 /***/ },
@@ -75,40 +87,45 @@
 	
 	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	var _partials = __webpack_require__(2);
 	
-	var _dom = __webpack_require__(2);
+	var _partials2 = _interopRequireDefault(_partials);
+	
+	var _Template = __webpack_require__(5);
+	
+	var _Template2 = _interopRequireDefault(_Template);
+	
+	var _dom = __webpack_require__(3);
 	
 	var _dom2 = _interopRequireDefault(_dom);
 	
-	var Presenter = (function (_Dom) {
-	  _inherits(Presenter, _Dom);
+	var _search = __webpack_require__(4);
 	
-	  function Presenter(baseurl) {
-	    _classCallCheck(this, Presenter);
+	var _search2 = _interopRequireDefault(_search);
 	
-	    _get(Object.getPrototypeOf(Presenter.prototype), 'constructor', this).call(this);
+	var Controller = (function () {
+	  function Controller(TVBaseURL) {
+	    _classCallCheck(this, Controller);
 	
-	    if (!baseurl) {
-	      throw "ResourceLoader: baseurl is required.";
+	    if (!TVBaseURL) {
+	      throw 'Controller: TVBaseURL is required.';
 	    }
-	    this.BASEURL = baseurl;
+	    this.TVBaseURL = TVBaseURL;
 	
-	    this.loadingTemplate = '<?xml version="1.0" encoding="UTF-8" ?>\n            <document>\n              <loadingTemplate>\n                <activityIndicator>\n                  <text>Loading...</text>\n                </activityIndicator>\n              </loadingTemplate>\n            </document>';
+	    this.dom = new _dom2['default']();
+	    this.template = new _Template2['default']();
+	
+	    this.search = new _search2['default'](TVBaseURL);
 	  }
 	
-	  _createClass(Presenter, [{
+	  _createClass(Controller, [{
 	    key: 'createAlert',
 	    value: function createAlert(alert) {
-	      var body = '<?xml version="1.0" encoding="UTF-8" ?>\n          <document>\n            <alertTemplate>\n              <title>' + alert.title + '</title>\n              <description>' + alert.description + '</description>\n            </alertTemplate>\n          </document>';
-	
-	      return _get(Object.getPrototypeOf(Presenter.prototype), 'domParser', this).call(this, body);
+	      return this.dom.parse(this.template.engine(_partials2['default'].alertBody, alert));
 	    }
 	  }, {
 	    key: 'loadResource',
@@ -117,117 +134,58 @@
 	
 	      evaluateScripts([resource], function (success) {
 	        if (success) {
-	          callback.call(_this, Template.call(_this));
+	          callback.call(_this, Content.call(_this));
 	        } else {
 	          var _alert = {
 	            title: 'Resource Loader Error',
 	            description: 'There was an error attempting to load the resource \'' + resource + '\'. \n\n Please try again later.'
 	          };
 	
-	          Presenter.removeLoadingIndicator();
-	          navigationDocument.presentModal(createAlert(_alert));
+	          _this.removeLoadingIndicator();
+	          navigationDocument.presentModal(_this.createAlert(_alert));
 	        }
 	      });
 	    }
 	  }, {
 	    key: 'defaultPresenter',
-	    value: function defaultPresenter(xml) {
+	    value: function defaultPresenter(template) {
 	      if (this.loadingIndicatorVisible) {
-	        navigationDocument.replaceDocument(xml, this.loadingIndicator);
+	        navigationDocument.replaceDocument(template, this.loadingIndicator);
 	
 	        this.loadingIndicatorVisible = false;
 	      } else {
-	        navigationDocument.pushDocument(xml);
+	        navigationDocument.pushDocument(template);
 	      }
-	    }
-	  }, {
-	    key: 'buildResults',
-	    value: function buildResults(doc, searchText) {
-	      var regExp = new RegExp(searchText, 'i');
-	      var matchesText = function matchesText(value) {
-	        return regExp.test(value);
-	      };
-	
-	      var movies = {
-	        'The Puffin': 1,
-	        'Lola and Max': 2,
-	        'Road to Firenze': 3,
-	        'Three Developers and a Baby': 4,
-	        'Santa Cruz Surf': 5,
-	        'Cinque Terre': 6,
-	        'Creatures of the Rainforest': 7
-	      };
-	      var titles = Object.keys(movies);
-	
-	      var stringData = '<list>\n          <section>\n            <header>\n              <title>No Results</title>\n            </header>\n          </section>\n        </list>';
-	
-	      titles = searchText ? titles.filter(matchesText) : titles;
-	
-	      if (titles.length > 0) {
-	        stringData = '<shelf><header><title>Results</title></header><section id="Results">';
-	
-	        var _iteratorNormalCompletion = true;
-	        var _didIteratorError = false;
-	        var _iteratorError = undefined;
-	
-	        try {
-	          for (var _iterator = titles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-	            var title = _step.value;
-	
-	            stringData += '<lockup>\n            <img src="' + this.BASEURL + 'resources/images/movies/movie_' + movies[title] + '.lcr" width="350" height="520" />\n            <title>' + title + '</title>\n          </lockup>';
-	          }
-	        } catch (err) {
-	          _didIteratorError = true;
-	          _iteratorError = err;
-	        } finally {
-	          try {
-	            if (!_iteratorNormalCompletion && _iterator['return']) {
-	              _iterator['return']();
-	            }
-	          } finally {
-	            if (_didIteratorError) {
-	              throw _iteratorError;
-	            }
-	          }
-	        }
-	
-	        stringData += '</section></shelf>';
-	      }
-	
-	      _get(Object.getPrototypeOf(Presenter.prototype), 'domReplacer', this).call(this, stringData, 'collectionList', doc);
 	    }
 	  }, {
 	    key: 'searchPresenter',
-	    value: function searchPresenter(xml) {
+	    value: function searchPresenter(doc) {
 	      var _this2 = this;
 	
-	      this.defaultPresenter.call(this, xml);
+	      this.defaultPresenter.call(this, doc);
 	
-	      var doc = xml;
 	      var searchField = doc.getElementsByTagName('searchField').item(0);
 	      var keyboard = searchField.getFeature('Keyboard');
 	
 	      keyboard.onTextChange = function () {
-	        var searchText = keyboard.text;
-	        console.log('search text changed: ' + searchText);
-	        _this2.buildResults(doc, searchText);
+	        return _this2.search.buildResults(doc, keyboard.text);
 	      };
 	    }
 	  }, {
 	    key: 'modalDialogPresenter',
-	    value: function modalDialogPresenter(xml) {
-	      navigationDocument.presentModal(xml);
+	    value: function modalDialogPresenter(template) {
+	      navigationDocument.presentModal(template);
 	    }
 	  }, {
 	    key: 'menuBarItemPresenter',
-	    value: function menuBarItemPresenter(xml, element) {
+	    value: function menuBarItemPresenter(template, element) {
 	      var feature = element.parentNode.getFeature('MenuBarDocument');
 	
 	      if (feature) {
 	        var currentDoc = feature.getDocument(element);
 	
 	        if (!currentDoc) {
-	          feature.setDocument(xml, element);
+	          feature.setDocument(template, element);
 	        }
 	      }
 	    }
@@ -245,7 +203,7 @@
 	
 	        this.loadResource(templateURL, function (resource) {
 	          if (resource) {
-	            var doc = _this3.makeDocument(resource);
+	            var doc = _this3.dom.parse(resource);
 	
 	            doc.addEventListener('select', _this3.load.bind(_this3));
 	            doc.addEventListener('highlight', _this3.load.bind(_this3));
@@ -260,19 +218,10 @@
 	      }
 	    }
 	  }, {
-	    key: 'makeDocument',
-	    value: function makeDocument(resource) {
-	      if (!Presenter.parser) {
-	        Presenter.parser = new DOMParser();
-	      }
-	
-	      return Presenter.parser.parseFromString(resource, 'application/xml');
-	    }
-	  }, {
 	    key: 'showLoadingIndicator',
 	    value: function showLoadingIndicator(presentation) {
 	      if (!this.loadingIndicator) {
-	        this.loadingIndicator = this.makeDocument(this.loadingTemplate);
+	        this.loadingIndicator = this.dom.parse(_partials2['default'].loadingTemplate);
 	      }
 	
 	      if (!this.loadingIndicatorVisible && presentation != 'modalDialogPresenter' && presentation != 'menuBarItemPresenter') {
@@ -292,14 +241,32 @@
 	    }
 	  }]);
 	
-	  return Presenter;
-	})(_dom2['default']);
+	  return Controller;
+	})();
 	
-	exports['default'] = Presenter;
+	exports['default'] = Controller;
 	module.exports = exports['default'];
 
 /***/ },
 /* 2 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	var partials = {};
+	
+	partials.loadingTemplate = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n                              <document>\n                                <loadingTemplate>\n                                  <activityIndicator>\n                                    <text>Loading...</text>\n                                  </activityIndicator>\n                                </loadingTemplate>\n                              </document>";
+	
+	partials.alertBody = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n                        <document>\n                          <alertTemplate>\n                            <title>{{title}}</title>\n                            <description>{{description}}</description>\n                          </alertTemplate>\n                        </document>";
+	
+	exports["default"] = partials;
+	module.exports = exports["default"];
+
+/***/ },
+/* 3 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -315,17 +282,18 @@
 	var Dom = (function () {
 	  function Dom() {
 	    _classCallCheck(this, Dom);
+	
+	    this.parser = new DOMParser();
 	  }
 	
 	  _createClass(Dom, [{
-	    key: 'domParser',
-	    value: function domParser(body) {
-	      var parser = new DOMParser();
-	      return parser.parseFromString(body, 'application/xml');
+	    key: 'parse',
+	    value: function parse(body) {
+	      return this.parser.parseFromString(body, 'application/xml');
 	    }
 	  }, {
-	    key: 'domReplacer',
-	    value: function domReplacer(data, target, doc) {
+	    key: 'replace',
+	    value: function replace(data, target, doc) {
 	      var domImplementation = doc.implementation;
 	      var lsParser = domImplementation.createLSParser(1, null);
 	      var lsInput = domImplementation.createLSInput();
@@ -341,6 +309,136 @@
 	
 	exports['default'] = Dom;
 	module.exports = exports['default'];
+
+/***/ },
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	var _dom = __webpack_require__(3);
+	
+	var _dom2 = _interopRequireDefault(_dom);
+	
+	var movies = {
+	  'The Puffin': 1,
+	  'Lola and Max': 2,
+	  'Road to Firenze': 3,
+	  'Three Developers and a Baby': 4,
+	  'Santa Cruz Surf': 5,
+	  'Cinque Terre': 6,
+	  'Creatures of the Rainforest': 7
+	};
+	
+	var Search = (function () {
+	  function Search(TVBaseURL) {
+	    _classCallCheck(this, Search);
+	
+	    this.TVBaseURL = TVBaseURL;
+	
+	    this.Dom = new _dom2['default']();
+	  }
+	
+	  _createClass(Search, [{
+	    key: 'buildResults',
+	    value: function buildResults(doc, searchText) {
+	      var regExp = new RegExp(searchText, 'i');
+	      var matchesText = function matchesText(value) {
+	        return regExp.test(value);
+	      };
+	
+	      var titles = Object.keys(movies);
+	
+	      var stringData = '<list>\n            <section>\n              <header>\n                <title>No Results</title>\n              </header>\n            </section>\n          </list>';
+	
+	      titles = searchText ? titles.filter(matchesText) : titles;
+	
+	      if (titles.length > 0) {
+	        stringData = '<shelf><header><title>Results</title></header><section id="Results">';
+	
+	        var _iteratorNormalCompletion = true;
+	        var _didIteratorError = false;
+	        var _iteratorError = undefined;
+	
+	        try {
+	          for (var _iterator = titles[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+	            var title = _step.value;
+	
+	            stringData += '<lockup>\n              <img src="' + this.TVBaseURL + 'resources/images/movies/movie_' + movies[title] + '.lcr" width="350" height="520" />\n              <title>' + title + '</title>\n            </lockup>';
+	          }
+	        } catch (err) {
+	          _didIteratorError = true;
+	          _iteratorError = err;
+	        } finally {
+	          try {
+	            if (!_iteratorNormalCompletion && _iterator['return']) {
+	              _iterator['return']();
+	            }
+	          } finally {
+	            if (_didIteratorError) {
+	              throw _iteratorError;
+	            }
+	          }
+	        }
+	
+	        stringData += '</section></shelf>';
+	      }
+	
+	      this.Dom.replace(stringData, 'collectionList', doc);
+	    }
+	  }]);
+	
+	  return Search;
+	})();
+	
+	exports['default'] = Search;
+	module.exports = exports['default'];
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Template = (function () {
+	  function Template() {
+	    _classCallCheck(this, Template);
+	
+	    this.cache = {};
+	  }
+	
+	  _createClass(Template, [{
+	    key: "engine",
+	    value: function engine(template, data) {
+	      var fn = !/\W/.test(template) ? this.cache[template] = cache[template] : new Function('obj', "var p=[],print=function(){p.push.apply(p,arguments);};" + "with(obj){p.push('" + template.replace(/[\r\t\n]/g, ' ').split('{{').join('\t').replace(/((^|\}\})[^\t]*)'/g, '$1\r').replace(/\t(.*?)\}\}/g, "',$1,'").split('\t').join("');").split('}}').join("p.push('").split('\r').join("\\'") + "');}return p.join('');");
+	
+	      return data ? fn(data) : fn;
+	    }
+	  }]);
+	
+	  return Template;
+	})();
+	
+	exports["default"] = Template;
+	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);

@@ -13,7 +13,7 @@ Place buttons carefully. Position buttons side by side when there’s scrollable
 
 For specific guidance on providing a great user experience when displaying an alert, see Alerts in Interactive Elements.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <descriptiveAlertTemplate>
   	<title>Lorem Ipsum</title>

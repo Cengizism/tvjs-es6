@@ -1,12 +1,13 @@
 class Dom {
-  constructor() {}
-
-  domParser(body) {
-    let parser = new DOMParser();
-    return parser.parseFromString(body, 'application/xml');
+  constructor() {
+    this.parser = new DOMParser();
   }
 
-  domReplacer(data, target, doc) {
+  parse(body) {
+    return this.parser.parseFromString(body, 'application/xml');
+  }
+
+  replace(data, target, doc) {
     let domImplementation = doc.implementation;
     let lsParser = domImplementation.createLSParser(1, null);
     let lsInput = domImplementation.createLSInput();

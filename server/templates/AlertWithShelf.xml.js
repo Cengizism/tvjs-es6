@@ -9,7 +9,7 @@ Alerts can be displayed as a modal controller or by pushing it on the document s
 
 For specific guidance on providing a great user experience when displaying an alert, see Alerts in Interactive Elements.
 */
-var Template = function() {
+var Content = function() {
   return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <head>

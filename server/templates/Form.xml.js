@@ -7,7 +7,7 @@ A form template displays a keyboard and one or more text fields where the user c
 
 For specific guidance on providing a great user experience when asking for text input, see Text and Keyboards in Interactive Elements.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <head>
     <style>

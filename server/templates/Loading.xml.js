@@ -11,7 +11,7 @@ Alerts can be displayed as a modal controller or by pushing it on the document s
 
 For general guidance on providing a great user experience when loading content, see Text and Keyboards in Interactive Elements.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <loadingTemplate>
     <activityIndicator>

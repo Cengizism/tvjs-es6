@@ -5,7 +5,7 @@ See LICENSE.txt for this sample’s licensing information
 Abstract:
 A parade template shows rotating previews for a focused grouping of content, such as movies or albums in a particular genre. A list of groupings is shown on the right. Focus on one to display non-interactive rotating previews of its elements on the left.
 */
-var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
+var Content = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
 <document>
   <paradeTemplate>
     <list>
@@ -17,12 +17,12 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
           <title>Title 1</title>
           <relatedContent>
             <imgDeck>
-              <img src="${this.BASEURL}resources/images/italy/italy_11_poster_scaled.jpg" />
-              <img src="${this.BASEURL}resources/images/italy/italy_12_poster_scaled.jpg" />
-              <img src="${this.BASEURL}resources/images/italy/italy_13_poster_scaled.jpg" />
-              <img src="${this.BASEURL}resources/images/italy/italy_14_poster_scaled.jpg" />
-              <img src="${this.BASEURL}resources/images/italy/italy_15_poster_scaled.jpg" />
-              <img src="${this.BASEURL}resources/images/italy/italy_16_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_11_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_12_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_13_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_14_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_15_poster_scaled.jpg" />
+              <img src="${this.TVBaseURL}resources/images/italy/italy_16_poster_scaled.jpg" />
             </imgDeck>
           </relatedContent>
         </listItemLockup>
@@ -44,12 +44,12 @@ var Template = function() { return `<?xml version="1.0" encoding="UTF-8" ?>
       </section>
       <relatedContent>
         <imgDeck>
-          <img src="${this.BASEURL}resources/images/italy/italy_5_poster_scaled.jpg" />
-          <img src="${this.BASEURL}resources/images/iceland/iceland_14_poster_scaled.jpg" />
-          <img src="${this.BASEURL}resources/images/italy/italy_18_poster_scaled.jpg" />
-          <img src="${this.BASEURL}resources/images/iceland/iceland_11_poster_scaled.jpg" />
-          <img src="${this.BASEURL}resources/images/italy/italy_20_poster_scaled.jpg" />
-          <img src="${this.BASEURL}resources/images/iceland/iceland_7_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/italy/italy_5_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_14_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/italy/italy_18_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_11_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/italy/italy_20_poster_scaled.jpg" />
+          <img src="${this.TVBaseURL}resources/images/iceland/iceland_7_poster_scaled.jpg" />
         </imgDeck>
       </relatedContent>
     </list>
