@@ -57,9 +57,7 @@
 	
 	  var index = presenter.loadResource(options.BASEURL + 'templates/Index.xml.js', function (resource) {
 	    var doc = presenter.makeDocument(resource);
-	
 	    doc.addEventListener('select', presenter.load.bind(presenter));
-	
 	    navigationDocument.pushDocument(doc);
 	  });
 	};
@@ -95,8 +93,8 @@
 	    value: function createAlert(title, description) {
 	      var alertString = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n          <document>\n            <alertTemplate>\n              <title>" + title + "</title>\n              <description>" + description + "</description>\n            </alertTemplate>\n          </document>";
 	
-	      var parser = new DOMParser(),
-	          alertDoc = parser.parseFromString(alertString, 'application/xml');
+	      var parser = new DOMParser();
+	      var alertDoc = parser.parseFromString(alertString, 'application/xml');
 	
 	      return alertDoc;
 	    }
@@ -107,16 +105,15 @@
 	
 	      evaluateScripts([resource], function (success) {
 	        if (success) {
-	          var resource = Template.call(self);
-	          callback.call(self, resource);
+	          var _resource = Template.call(self);
+	          callback.call(self, _resource);
 	        } else {
-	          var title = "Resource Loader Error",
-	              description = "There was an error attempting to load the resource '" + resource + "'. \n\n Please try again later.",
-	              alert = createAlert(title, description);
+	          var title = "Resource Loader Error";
+	          var description = "There was an error attempting to load the resource '" + resource + "'. \n\n Please try again later.";
+	          var _alert = createAlert(title, description);
 	
 	          Presenter.removeLoadingIndicator();
-	
-	          navigationDocument.presentModal(alert);
+	          navigationDocument.presentModal(_alert);
 	        }
 	      });
 	    }
@@ -135,11 +132,9 @@
 	    key: "buildResults",
 	    value: function buildResults(doc, searchText) {
 	      var regExp = new RegExp(searchText, 'i');
-	
 	      var matchesText = function matchesText(value) {
 	        return regExp.test(value);
 	      };
-	
 	      var movies = {
 	        'The Puffin': 1,
 	        'Lola and Max': 2,
@@ -196,15 +191,16 @@
 	    key: "searchPresenter",
 	    value: function searchPresenter(xml) {
 	      var self = this;
-	      this.defaultPresenter.call(this, xml);
 	      var doc = xml;
+	
+	      this.defaultPresenter.call(this, xml);
 	
 	      var searchField = doc.getElementsByTagName('searchField').item(0);
 	      var keyboard = searchField.getFeature('Keyboard');
 	
 	      keyboard.onTextChange = function () {
 	        var searchText = keyboard.text;
-	        //console.log('search text changed: ' + searchText);
+	        console.log('search text changed: ' + searchText);
 	        self.buildResults(doc, searchText);
 	      };
 	    }
@@ -229,10 +225,10 @@
 	  }, {
 	    key: "load",
 	    value: function load(event) {
-	      var self = this,
-	          ele = event.target,
-	          templateURL = ele.getAttribute('template'),
-	          presentation = ele.getAttribute('presentation');
+	      var self = this;
+	      var ele = event.target;
+	      var templateURL = ele.getAttribute('template');
+	      var presentation = ele.getAttribute('presentation');
 	
 	      if (templateURL) {
 	        self.showLoadingIndicator(presentation);

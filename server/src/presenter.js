@@ -16,7 +16,7 @@ class Presenter {
   }
 
   createAlert(title, description) {
-    var alertString = `<?xml version="1.0" encoding="UTF-8" ?>
+    let alertString = `<?xml version="1.0" encoding="UTF-8" ?>
           <document>
             <alertTemplate>
               <title>${title}</title>
@@ -24,8 +24,8 @@ class Presenter {
             </alertTemplate>
           </document>`
 
-    var parser = new DOMParser(),
-      alertDoc = parser.parseFromString(alertString, 'application/xml');
+    let parser = new DOMParser();
+    let alertDoc = parser.parseFromString(alertString, 'application/xml');
 
     return alertDoc;
   }
@@ -35,15 +35,14 @@ class Presenter {
 
     evaluateScripts([resource], (success) => {
       if (success) {
-        var resource = Template.call(self);
+        let resource = Template.call(self);
         callback.call(self, resource);
       } else {
-        var title = "Resource Loader Error",
-          description = `There was an error attempting to load the resource '${resource}'. \n\n Please try again later.`,
-          alert = createAlert(title, description);
+        let title = "Resource Loader Error";
+        let description = `There was an error attempting to load the resource '${resource}'. \n\n Please try again later.`;
+        let alert = createAlert(title, description);
 
         Presenter.removeLoadingIndicator();
-
         navigationDocument.presentModal(alert);
       }
     });
@@ -60,13 +59,9 @@ class Presenter {
   }
 
   buildResults(doc, searchText) {
-    var regExp = new RegExp(searchText, 'i');
-
-    var matchesText = (value) => {
-      return regExp.test(value);
-    }
-
-    var movies = {
+    let regExp = new RegExp(searchText, 'i');
+    let matchesText = value => regExp.test(value);
+    let movies = {
       'The Puffin': 1,
       'Lola and Max': 2,
       'Road to Firenze': 3,
@@ -76,10 +71,10 @@ class Presenter {
       'Creatures of the Rainforest': 7
     };
 
-    var titles = Object.keys(movies);
-    var domImplementation = doc.implementation;
-    var lsParser = domImplementation.createLSParser(1, null);
-    var lsInput = domImplementation.createLSInput();
+    let titles = Object.keys(movies);
+    let domImplementation = doc.implementation;
+    let lsParser = domImplementation.createLSParser(1, null);
+    let lsInput = domImplementation.createLSInput();
 
     lsInput.stringData = `<list>
         <section>
@@ -108,16 +103,17 @@ class Presenter {
   }
 
   searchPresenter(xml) {
-    var self = this;
-    this.defaultPresenter.call(this, xml);
-    var doc = xml;
+    let self = this;
+    let doc = xml;
 
-    var searchField = doc.getElementsByTagName('searchField').item(0);
-    var keyboard = searchField.getFeature('Keyboard');
+    this.defaultPresenter.call(this, xml);
+
+    let searchField = doc.getElementsByTagName('searchField').item(0);
+    let keyboard = searchField.getFeature('Keyboard');
 
     keyboard.onTextChange = () => {
-      var searchText = keyboard.text;
-      //console.log('search text changed: ' + searchText);
+      let searchText = keyboard.text;
+      console.log('search text changed: ' + searchText);
       self.buildResults(doc, searchText);
     }
   }
@@ -127,10 +123,10 @@ class Presenter {
   }
 
   menuBarItemPresenter(xml, ele) {
-    var feature = ele.parentNode.getFeature('MenuBarDocument');
+    let feature = ele.parentNode.getFeature('MenuBarDocument');
 
     if (feature) {
-      var currentDoc = feature.getDocument(ele);
+      let currentDoc = feature.getDocument(ele);
 
       if (!currentDoc) {
         feature.setDocument(xml, ele);
@@ -139,10 +135,10 @@ class Presenter {
   }
 
   load(event) {
-    var self = this,
-      ele = event.target,
-      templateURL = ele.getAttribute('template'),
-      presentation = ele.getAttribute('presentation');
+    let self = this;
+    let ele = event.target;
+    let templateURL = ele.getAttribute('template');
+    let presentation = ele.getAttribute('presentation');
 
     if (templateURL) {
       self.showLoadingIndicator(presentation);
@@ -169,7 +165,7 @@ class Presenter {
       Presenter.parser = new DOMParser();
     }
 
-    var doc = Presenter.parser.parseFromString(resource, 'application/xml');
+    let doc = Presenter.parser.parseFromString(resource, 'application/xml');
     return doc;
   }
 
