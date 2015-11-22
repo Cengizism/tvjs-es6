@@ -57,7 +57,7 @@
 	  var path = options.TVBaseURL + 'templates/Index.xml.js';
 	
 	  var index = controller.loadResource(path, function (resource) {
-	    var doc = controller.dom.parse(resource);
+	    var doc = controller.domHelper.parse(resource);
 	    doc.addEventListener('select', controller.load.bind(controller));
 	    navigationDocument.pushDocument(doc);
 	  });
@@ -95,15 +95,15 @@
 	
 	var _partials2 = _interopRequireDefault(_partials);
 	
-	var _Template = __webpack_require__(5);
+	var _Template = __webpack_require__(3);
 	
 	var _Template2 = _interopRequireDefault(_Template);
 	
-	var _dom = __webpack_require__(3);
+	var _domHelper = __webpack_require__(4);
 	
-	var _dom2 = _interopRequireDefault(_dom);
+	var _domHelper2 = _interopRequireDefault(_domHelper);
 	
-	var _search = __webpack_require__(4);
+	var _search = __webpack_require__(5);
 	
 	var _search2 = _interopRequireDefault(_search);
 	
@@ -116,7 +116,7 @@
 	    }
 	    this.TVBaseURL = TVBaseURL;
 	
-	    this.dom = new _dom2['default']();
+	    this.domHelper = new _domHelper2['default']();
 	    this.template = new _Template2['default']();
 	
 	    this.search = new _search2['default'](TVBaseURL);
@@ -125,7 +125,7 @@
 	  _createClass(Controller, [{
 	    key: 'createAlert',
 	    value: function createAlert(alert) {
-	      return this.dom.parse(this.template.engine(_partials2['default'].alertBody, alert));
+	      return this.domHelper.parse(this.template.engine(_partials2['default'].alertBody, alert));
 	    }
 	  }, {
 	    key: 'loadResource',
@@ -203,7 +203,7 @@
 	
 	        this.loadResource(templateURL, function (resource) {
 	          if (resource) {
-	            var doc = _this3.dom.parse(resource);
+	            var doc = _this3.domHelper.parse(resource);
 	
 	            doc.addEventListener('select', _this3.load.bind(_this3));
 	            doc.addEventListener('highlight', _this3.load.bind(_this3));
@@ -221,7 +221,7 @@
 	    key: 'showLoadingIndicator',
 	    value: function showLoadingIndicator(presentation) {
 	      if (!this.loadingIndicator) {
-	        this.loadingIndicator = this.dom.parse(_partials2['default'].loadingTemplate);
+	        this.loadingIndicator = this.domHelper.parse(_partials2['default'].loadingTemplate);
 	      }
 	
 	      if (!this.loadingIndicatorVisible && presentation != 'modalDialogPresenter' && presentation != 'menuBarItemPresenter') {
@@ -269,6 +269,42 @@
 /* 3 */
 /***/ function(module, exports) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	var Template = (function () {
+	  function Template() {
+	    _classCallCheck(this, Template);
+	
+	    this.cache = {};
+	  }
+	
+	  _createClass(Template, [{
+	    key: "engine",
+	    value: function engine(template, data) {
+	      var fn = !/\W/.test(template) ? this.cache[template] = cache[template] : new Function('obj', "var p=[],print=function(){p.push.apply(p,arguments);};" + "with(obj){p.push('" + template.replace(/[\r\t\n]/g, ' ').split('{{').join('\t').replace(/((^|\}\})[^\t]*)'/g, '$1\r').replace(/\t(.*?)\}\}/g, "',$1,'").split('\t').join("');").split('}}').join("p.push('").split('\r').join("\\'") + "');}return p.join('');");
+	
+	      return data ? fn(data) : fn;
+	    }
+	  }]);
+	
+	  return Template;
+	})();
+	
+	exports["default"] = Template;
+	module.exports = exports["default"];
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
 	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
@@ -279,14 +315,14 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var Dom = (function () {
-	  function Dom() {
-	    _classCallCheck(this, Dom);
+	var DomHelper = (function () {
+	  function DomHelper() {
+	    _classCallCheck(this, DomHelper);
 	
 	    this.parser = new DOMParser();
 	  }
 	
-	  _createClass(Dom, [{
+	  _createClass(DomHelper, [{
 	    key: 'parse',
 	    value: function parse(body) {
 	      return this.parser.parseFromString(body, 'application/xml');
@@ -304,14 +340,14 @@
 	    }
 	  }]);
 	
-	  return Dom;
+	  return DomHelper;
 	})();
 	
-	exports['default'] = Dom;
+	exports['default'] = DomHelper;
 	module.exports = exports['default'];
 
 /***/ },
-/* 4 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -326,9 +362,9 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _dom = __webpack_require__(3);
+	var _domHelper = __webpack_require__(4);
 	
-	var _dom2 = _interopRequireDefault(_dom);
+	var _domHelper2 = _interopRequireDefault(_domHelper);
 	
 	var movies = {
 	  'The Puffin': 1,
@@ -346,7 +382,7 @@
 	
 	    this.TVBaseURL = TVBaseURL;
 	
-	    this.Dom = new _dom2['default']();
+	    this.domHelper = new _domHelper2['default']();
 	  }
 	
 	  _createClass(Search, [{
@@ -394,7 +430,7 @@
 	        stringData += '</section></shelf>';
 	      }
 	
-	      this.Dom.replace(stringData, 'collectionList', doc);
+	      this.domHelper.replace(stringData, 'collectionList', doc);
 	    }
 	  }]);
 	
@@ -403,42 +439,6 @@
 	
 	exports['default'] = Search;
 	module.exports = exports['default'];
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-	
-	var Template = (function () {
-	  function Template() {
-	    _classCallCheck(this, Template);
-	
-	    this.cache = {};
-	  }
-	
-	  _createClass(Template, [{
-	    key: "engine",
-	    value: function engine(template, data) {
-	      var fn = !/\W/.test(template) ? this.cache[template] = cache[template] : new Function('obj', "var p=[],print=function(){p.push.apply(p,arguments);};" + "with(obj){p.push('" + template.replace(/[\r\t\n]/g, ' ').split('{{').join('\t').replace(/((^|\}\})[^\t]*)'/g, '$1\r').replace(/\t(.*?)\}\}/g, "',$1,'").split('\t').join("');").split('}}').join("p.push('").split('\r').join("\\'") + "');}return p.join('');");
-	
-	      return data ? fn(data) : fn;
-	    }
-	  }]);
-	
-	  return Template;
-	})();
-	
-	exports["default"] = Template;
-	module.exports = exports["default"];
 
 /***/ }
 /******/ ]);

@@ -1,4 +1,4 @@
-class Dom {
+class DomHelper {
   constructor() {
     this.parser = new DOMParser();
   }
@@ -18,4 +18,4 @@ class Dom {
   }
 }
 
-export default Dom;
+export default DomHelper;

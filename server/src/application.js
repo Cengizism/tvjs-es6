@@ -5,7 +5,7 @@ App.onLaunch = function(options) {
   let path = `${options.TVBaseURL}templates/Index.xml.js`;
 
   var index = controller.loadResource(path, resource => {
-    let doc = controller.dom.parse(resource);
+    let doc = controller.domHelper.parse(resource);
     doc.addEventListener('select', controller.load.bind(controller));
     navigationDocument.pushDocument(doc);
   });

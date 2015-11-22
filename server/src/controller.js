@@ -1,6 +1,6 @@
 import partials from './partials';
 import Template from './Template';
-import Dom from './dom';
+import DomHelper from './dom-helper';
 import Search from './search';
 
 class Controller {
@@ -10,14 +10,14 @@ class Controller {
     }
     this.TVBaseURL = TVBaseURL;
 
-    this.dom = new Dom();
+    this.domHelper = new DomHelper();
     this.template = new Template();
 
     this.search = new Search(TVBaseURL);
   }
 
   createAlert(alert) {
-    return this.dom.parse(this.template.engine(partials.alertBody, alert));
+    return this.domHelper.parse(this.template.engine(partials.alertBody, alert));
   }
 
   loadResource(resource, callback) {
@@ -81,7 +81,7 @@ class Controller {
 
       this.loadResource(templateURL, resource => {
         if (resource) {
-          var doc = this.dom.parse(resource);
+          var doc = this.domHelper.parse(resource);
 
           doc.addEventListener('select', this.load.bind(this));
           doc.addEventListener('highlight', this.load.bind(this));
@@ -98,7 +98,7 @@ class Controller {
 
   showLoadingIndicator(presentation) {
     if (!this.loadingIndicator) {
-      this.loadingIndicator = this.dom.parse(partials.loadingTemplate);
+      this.loadingIndicator = this.domHelper.parse(partials.loadingTemplate);
     }
 
     if (!this.loadingIndicatorVisible && presentation != 'modalDialogPresenter' && presentation != 'menuBarItemPresenter') {

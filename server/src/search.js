@@ -1,4 +1,4 @@
-import Dom from './dom';
+import DomHelper from './dom-helper';
 
 let movies = {
   'The Puffin': 1,
@@ -14,7 +14,7 @@ class Search {
     constructor(TVBaseURL) {
       this.TVBaseURL = TVBaseURL;
 
-      this.Dom = new Dom();
+      this.domHelper = new DomHelper();
     }
 
     buildResults(doc, searchText) {
@@ -46,7 +46,7 @@ class Search {
         stringData += `</section></shelf>`;
       }
 
-      this.Dom.replace(stringData, 'collectionList', doc);
+      this.domHelper.replace(stringData, 'collectionList', doc);
     }
 }
 
